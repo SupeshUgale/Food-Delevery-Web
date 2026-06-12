@@ -1,0 +1,64 @@
+.navbar{
+    display: flex;
+
+  align-items: center;
+  height: 5rem;
+  color: white;
+  background-color: rgb(31, 14, 43);
+  
+  
+}
+
+
+.navbar .div1 .logoimg{
+   height: 25px;
+   margin-left: 20px;
+}
+.navbar .div2 ul{
+    margin-left: 20rem;
+    display: flex;
+    gap: 50px;
+    text-decoration: none;
+    list-style: none;
+    text-align: center;
+    align-items: center;
+  
+    justify-content: center;
+    width: 40rem;
+    
+    
+}
+.navbar .div2 ul li:hover{
+    color: cadetblue;
+}
+
+.navbar .div3{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 60px;
+   height: 3rem;
+    margin-left: 10rem;
+
+}
+.navbar .div3 .img1{
+    height: 30px;
+    transform: 0.3s;
+}
+.navbar .div3 .img1:hover{
+ transform: scale(1.5);
+}
+.navbar .div3 .img2{
+    height: 30px;
+    transform: 0.3s;
+}
+.navbar .div3 .img2:hover{
+ transform: scale(1.1);
+}
+.div3 button{
+    background-color:#FFC107;
+    border-radius: 30px;
+    margin-left: 5rem;
+    height: 50px;
+    width: 120px;
+}

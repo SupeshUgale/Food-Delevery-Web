@@ -1,0 +1,34 @@
+
+.header{
+    position: relative;
+    width: 100%;
+    height: 100vh;
+}
+
+.header img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.header h1{
+    position: absolute;
+    top: 35rem;
+   width: 48rem;
+    left: 3rem;
+
+    color: rgb(88, 212, 185);
+    font-size: 5rem;
+    z-index: 1;
+}
+
+.header h4{
+    position: absolute;
+    top:46rem;
+    left:3rem;
+    font-size: 25px;
+    color:rgb(60, 87, 60);
+    z-index: 1;
+
+
+}
