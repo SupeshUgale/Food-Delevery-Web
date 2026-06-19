@@ -1,80 +1,122 @@
-import React, { useState } from 'react';
-import { z } from 'zod';
+import React, { useContext, useEffect, useState } from 'react';
+import './Placeorder.css';
+import { StoreContext } from '../../Context/Storecontext';
+import axios from 'axios';
 
-// Form validation schema using Zod
-const deliverySchema = z.object({
-  fullName: z.string().min(3, "Full name must be at least 3 characters"),
-  address: z.string().min(10, "Please provide a detailed delivery address"),
-  phone: z.string().regex(/^\d{10}$/, "Phone number must be exactly 10 digits"),
-  paymentMethod: z.enum(["COD", "Card", "UPI"]),
+const Placeorder = () => {
+  const {getTotalcartAmount,token,food_list,cartItems,url}=useContext(StoreContext);
+  
+  //state variables for storing the information of form filled
+  const [data, setData] = useState({
+    firstName:"",
+    lastName:"",
+    email:"",
+    street:"",
+    city:"",
+    state:"",
+    zipcode:"",
+    country:"",
+    phone:""
+  })
+
+  //function for saving the data on input field 
+  const onChangeHandler = (event) =>{
+    const name = event.target.name;
+    const value = event.target.value;
+    setData(data=>({...data,[name]:value}))
+  }
+
+  const placeOrder = async (event)=>{
+  event.preventDefault();
+  //geting all data of the cart items
+  let orderItems = [];
+  food_list.map((item)=>{
+   if (cartItems[item._id] && cartItems[item._id] > 0) {
+
+      let itemInfo =item;
+      itemInfo["quantity"] = cartItems[item._id];
+      orderItems.push(itemInfo);
+    }
+  });
+  
+  let orderData ={
+ 
+    adress:data,
+    items:orderItems,
+    amount:getTotalcartAmount()+2,
+  };
+/**************************/
+//api request for order
+  try {
+    let response = await axios.post(url + "/api/order/place", orderData, {
+  headers: {
+    Authorization: `Bearer ${token}`, 
+  },
 });
 
-type DeliveryFormData = z.infer<typeof deliverySchema>;
-
-const PlaceOrder: React.FC = () => {
-  const [formData, setFormData] = useState<DeliveryFormData>({
-    fullName: '',
-    address: '',
-    phone: '',
-    paymentMethod: 'COD',
-  });
-  const [errors, setErrors] = useState<Record<string, string>>({});
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const result = deliverySchema.safeParse(formData);
-
-    if (!result.success) {
-      const formattedErrors: Record<string, string> = {};
-      result.error.errors.forEach((err) => {
-        if (err.path[0]) formattedErrors[err.path[0].toString()] = err.message;
-      });
-      setErrors(formattedErrors);
-    } else {
-      setErrors({});
-      alert("🎉 Order placed successfully! Your delivery partner will assign shortly.");
+  if(response.data.success){
+   
+   const session_url = response.data.session_url;
+   //sending user to session url if payment succeced 
+   window.location.replace(session_url);
+  }
+  else{
+     console.error("Server responded with success: false", response.data);
     }
-  };
-
-  return (
-    <div className="place-order-page">
-      <h2>Delivery & Payment Details 📦</h2>
-      <form onSubmit={handleSubmit} className="checkout-form">
-        <div className="form-group">
-          <label>Full Name</label>
-          <input type="text" name="fullName" value={formData.fullName} onChange={handleInputChange} />
-          {errors.fullName && <p className="error-text">{errors.fullName}</p>}
-        </div>
-
-        <div className="form-group">
-          <label>Complete Address</label>
-          <textarea name="address" rows={3} value={formData.address} onChange={handleInputChange} />
-          {errors.address && <p className="error-text">{errors.address}</p>}
-        </div>
-
-        <div className="form-group">
-          <label>Phone Number</label>
-          <input type="text" name="phone" value={formData.phone} onChange={handleInputChange} />
-          {errors.phone && <p className="error-text">{errors.phone}</p>}
-        </div>
-
-        <div className="form-group">
-          <label>Select Payment Method</label>
-          <select name="paymentMethod" value={formData.paymentMethod} onChange={handleInputChange}>
-            <option value="COD">Cash on Delivery (COD)</option>
-            <option value="UPI">UPI Apps</option>
-            <option value="Card">Credit / Debit Card</option>
-          </select>
-        </div>
-
-        <button type="submit" className="place-order-btn">Confirm Order</button>
-      </form>
-    </div>
-  );
+}
+catch (error) {
+    //  Log full error object
+    console.error(" Error while placing order:", error);
+  }
 };
 
-export default PlaceOrder;
+
+  return (
+    <form onSubmit={placeOrder} className='place-order'>
+      <div className='place-order-left'>
+        <p className='tittle'>Delivery Information</p>
+        <div className='multi-fields'>
+          <input required name="firstName" onChange={onChangeHandler} value={data.firstName} type="text" placeholder='First-name' />
+          <input required  name="lastName" onChange={onChangeHandler} value={data.lastName} type="text" placeholder='Last-name' />
+        </div>
+        <input required  name="email" onChange={onChangeHandler} value={data.email} type='email' placeholder='Email-Adress' />
+        <input required  name="street" onChange={onChangeHandler} value={data.street} type='text' placeholder='Street' />
+        <div className='multi-fields'>
+          <input required  name="city" onChange={onChangeHandler} value={data.city} type="text" placeholder='City' />
+          <input required  name="state" onChange={onChangeHandler} value={data.state} type="text" placeholder='State' />
+        </div>
+        <div className='multi-fields'>
+          <input required  name="zipcode" onChange={onChangeHandler} value={data.zipcode} type="text" placeholder='Zip code' />
+          <input required  name="country" onChange={onChangeHandler} value={data.country} type="text" placeholder='Country' />
+        </div>
+        <input  required name="phone" onChange={onChangeHandler} value={data.phone} type='text' placeholder='phone' />
+      </div>
+      
+      
+      <div className='place-order-right'>
+        <div className='cart-total'>
+          <h2>cart Totals</h2>
+          <div>
+            <div className='cart-total-details'>
+              <p>Subtotal</p>
+              <p>₹{getTotalcartAmount()}</p>
+            </div>
+            <hr/>
+            <div className='cart-total-details'>
+              <p>Delivery Fee</p>
+              <p>₹{getTotalcartAmount()===0 ?0:2}</p>
+            </div>
+            <hr></hr>
+            <div className='cart-total-details'>
+              <b>Total</b>
+              <b>₹{getTotalcartAmount()===0?0:getTotalcartAmount()+2}</b>
+            </div>
+           </div>
+            <button type='submit'>PROCEED TO PAYMENT</button>
+        </div>
+      </div>
+    </form>
+  )
+}
+
+export default Placeorder

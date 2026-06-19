@@ -1,14 +1,40 @@
-import React from "react";
-import Navbar from "./components/NavBar/Navbar";
-import Home from "./pages/Home/Home";
+import React, { useState } from 'react'
+import Navbar from './Components/Navbar/Navbar'
+import { Route, Routes } from 'react-router-dom'
+import Home from './Pages/Home/home.jsx'
+import Cart from './Pages/Cart/cart.jsx'
+import Placeorder from './Pages/Placeorder/PlaceOrder.jsx'
+import Footer from './Components/Footer/Footer.jsx'
+import LoginPopup from './Components/LoginPopup/LoginPopup.jsx'
+import Verify from './Pages/Verify/Verify.jsx'
+import Myorder from "./Pages/Myorder/Myorder.jsx";
+
+
 
 const App = () => {
+  const[showLogin,setShowLogin]=useState(false)
+  
   return (
     <>
-      <Navbar />
-      <Home />
-    </>
-  );
-};
+      {showLogin?<LoginPopup setShowLogin={setShowLogin}/>:<></>}
+      <div className='app'>
+        <Navbar setShowLogin={setShowLogin} />
+        <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='/cart' element={<Cart />} />
+          <Route path='/order' element={<Placeorder />} />
+          <Route path='/verify' element={<Verify/>}/>
+         <Route path="/myorders" element={<Myorder />} />
+        </Routes>
 
-export default App;
+      </div>
+      <Footer />
+     
+    </>
+     
+
+
+  )
+}
+
+export default App

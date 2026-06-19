@@ -1,23 +1,16 @@
-import React from "react";
-import { assets } from "../../assets/assets";
-import "./Header.css";
+import React from 'react'
 
+import './Header.css'
 const Header = () => {
   return (
-    <div className="header">
-      <img src={assets.header_img} alt="Header Banner" />
-
-      <div className="header-content">
-        <h1>Order Your Favorite Food</h1>
-
-        <p>
-          Fresh, tasty, and affordable food delivered straight to your door.
-        </p>
-
-        <button>View Menu</button>
-      </div>
+    <div className='header'>
+        <div className='header-content'>
+           <h2>Order your favourite food here</h2> 
+           <p>choose from a diverse menu featuring a delectable array of dishes crafted with the finest ingredients and culinary expertise.Our mission is satisfy your cravings and elevate your dining experience, one delicious meal at a time.</p>
+            <button>View Menu</button>
+        </div>
     </div>
-  );
-};
+  )
+}
 
-export default Header;
+export default Header
