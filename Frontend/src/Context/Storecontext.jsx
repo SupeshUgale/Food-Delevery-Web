@@ -9,7 +9,7 @@ import axios from "axios";
   const [cartItems, setCartItems] = useState({});
   const [token, setToken] = useState(localStorage.getItem("token") || "");
   const [foodList, setFoodList] = useState([]);
-  const url = "https://food-delivery-website-zwz8.onrender.com";
+  const url = import.meta.env.VITE_BACKEND_URL || "https://food-delivery-website-zwz8.onrender.com";
 
   // Add item to cart
   const addToCart = async (itemId) => {

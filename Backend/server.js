@@ -1,34 +1,58 @@
-import dotenv from "dotenv";
-dotenv.config();
-
+import 'dotenv/config';
 import express from "express";
 import cors from "cors";
+
 import connectDB from "./config/db.js";
-import foodRouter from "./routes/foodRoute.js";
+
+// Routes
+import foodrouter from "./routes/foodroutes.js";
+import userRouter from "./routes/userRoute.js";
+import cartRouter from "./routes/cartroute.js";
+import OrderRouter from "./routes/orderRouter.js";
 
 const app = express();
-
-// Middleware
+const port = process.env.PORT || 4000;
+console.log("🔥 server.js started");
+/* ======================
+   Middlewares
+====================== */
 app.use(express.json());
 app.use(cors());
 
-// Serve uploaded images as static files
+/* ======================
+   Static files
+====================== */
 app.use("/images", express.static("uploads"));
 
-// Connect to Database
-connectDB();
+/* ======================
+   Routes
+====================== */
+app.use("/api/food", foodrouter);
+app.use("/api/user", userRouter);
+app.use("/api/cart", cartRouter);
+app.use("/api/order", OrderRouter);
 
-// Routes
-app.use("/api/food", foodRouter);
-app.use("/image", express.static('uploads'))
-
-// Health check route
+/* ======================
+   Health Check Route
+====================== */
 app.get("/", (req, res) => {
-  res.send("Food Delivery API Running...");
+  res.send("✅ API Working");
 });
 
-const PORT = process.env.PORT || 5000;
+/* ======================
+   Start Server ONLY after DB connect
+====================== */
+const startServer = async () => {
+  try {
+    await connectDB();
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+    app.listen(port, () => {
+      console.log(`🚀 Server running on http://localhost:${port}`);
+    });
+  } catch (error) {
+    console.error("❌ Server failed to start:", error);
+    process.exit(1);
+  }
+};
+
+startServer();
